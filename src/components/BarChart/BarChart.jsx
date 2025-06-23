@@ -57,7 +57,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const MyBarChart = () => {
-  const barColor = ' #20B2AA'; // Green
+  const barColor = ' #20B2AA'; 
   const backgroundColor = '#F4F4F4';
   const gridColor = '#CCCCCC';
 
