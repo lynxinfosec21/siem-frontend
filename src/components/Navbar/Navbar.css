@@ -1,0 +1,84 @@
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0rem 0.8rem !important;
+  border-bottom: 1px solid #ccc;
+  height: 40px !important; 
+  min-height: 40px !important;
+  box-sizing: border-box;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hamburger {
+  font-size: 1.2rem;  
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.w-icon {
+  width: 28px;  
+  height: 28px;
+}
+
+.divider {
+  height: 24px;
+  width: 1px;
+  background-color: grey;
+}
+
+.discover-btn {
+  background-color: #cbe4f6; /* Light blue */
+  color: #2b2b2b;            /* Dark text */
+  border: none;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 5px 0 0 5px; /* Rounded left side only */
+  clip-path: polygon(0 0, 95% 0, 100% 50%, 95% 100%, 0% 100%);
+  cursor: pointer;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+}
+
+.nav-link {
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  color: #005A9C;
+  transition: color 0.2s ease;
+  margin-right: 20px;
+}
+
+.nav-link:hover {
+  color: #1e1f20;
+}
+
+.help-icon {
+  font-size: 18px;  
+  margin-left: 0.4rem;
+  cursor: pointer;
+  color: #555;
+}
+.circle {
+  width: 30px;
+  height: 30px;
+  background-color: #FDDA0D; 
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
