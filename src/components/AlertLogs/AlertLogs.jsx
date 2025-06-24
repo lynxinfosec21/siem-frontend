@@ -1,37 +1,36 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import axios from 'axios';
-import './AlertLogs.css';
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import axios from "axios";
+import "./AlertLogs.css";
 
-const AlertLogs = ({ refreshTrigger = 0, maxHeight = '24rem' }) => {
+const AlertLogs = ({ refreshTrigger = 0, maxHeight = "24rem" }) => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [lastFetchTime, setLastFetchTime] = useState(null);
-  
+
   const refreshIntervalRef = useRef(null);
 
   const fetchLogs = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      const response = await axios.post('http://localhost:4000/api/search', {
-        index: 'top_queries-*',
+      const response = await axios.post("http://localhost:4000/api/search", {
+        index: "top_queries-*",
         query: {
           size: 100,
           query: {
-            match_all: {}
+            match_all: {},
           },
-          
-        }
+        },
       });
 
       const hits = response.data.hits?.hits || [];
       setLogs(hits);
       setLastFetchTime(new Date());
     } catch (err) {
-      console.error('Error fetching logs:', err);
-      setError(err.message || 'Failed to fetch logs');
+      console.error("Error fetching logs:", err);
+      setError(err.message || "Failed to fetch logs");
     } finally {
       setLoading(false);
     }
@@ -41,30 +40,39 @@ const AlertLogs = ({ refreshTrigger = 0, maxHeight = '24rem' }) => {
   const processedLogs = useMemo(() => {
     return logs.map((hit, index) => {
       const source = hit._source || {};
-      
+
       // Format timestamp to "Day month year" format with time
-      const timestamp = source['@timestamp'] || new Date().toISOString();
+      const timestamp = source["@timestamp"] || new Date().toISOString();
+
       const date = new Date(timestamp);
-      const formattedTime = date.toLocaleDateString('en-US', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      }) + ' ' + date.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      });
-      
+      const formattedTime =
+        date.toLocaleDateString("en-US", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }) +
+        " " +
+        date.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+
       // Just map over each field
       const sourceData = Object.entries(source)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join(' | ');
+        .map(([key, value]) => {
+          if (typeof value === "object" && value !== null) {
+            return `${key}: ${JSON.stringify(value)}`;
+          }
+          return `${key}: ${value}`;
+        })
+        .join(" | ");
 
       return {
         id: hit._id || index,
         timestamp: formattedTime,
         source: sourceData,
-        rawSource: source
+        rawSource: source,
       };
     });
   }, [logs]);
@@ -73,13 +81,9 @@ const AlertLogs = ({ refreshTrigger = 0, maxHeight = '24rem' }) => {
   const tableRows = useMemo(() => {
     return processedLogs.map((log) => (
       <tr key={log.id} className="table-row">
-        <td className="table-cell time-cell">
-          {log.timestamp}
-        </td>
+        <td className="table-cell time-cell">{log.timestamp}</td>
         <td className="table-cell source-cell">
-          <code className="source-code">
-            {log.source}
-          </code>
+          <code className="source-code">{log.source}</code>
         </td>
       </tr>
     ));
@@ -125,16 +129,16 @@ const AlertLogs = ({ refreshTrigger = 0, maxHeight = '24rem' }) => {
               Last updated: {lastFetchTime.toLocaleTimeString()}
             </span>
           )}
-          <button 
+          <button
             className="refresh-button"
             onClick={fetchLogs}
             disabled={loading}
           >
-            {loading ? '⏳' : '🔄'}
+            {loading ? "⏳" : "🔄"}
           </button>
         </div>
       </div>
-      
+
       <div className="alert-logs-content" style={{ maxHeight }}>
         {loading && logs.length === 0 ? (
           <div className="loading-container">
@@ -145,10 +149,7 @@ const AlertLogs = ({ refreshTrigger = 0, maxHeight = '24rem' }) => {
           <div className="error-container">
             <span className="error-icon">⚠️</span>
             <span className="error-message">{error}</span>
-            <button 
-              className="retry-button"
-              onClick={fetchLogs}
-            >
+            <button className="retry-button" onClick={fetchLogs}>
               Retry
             </button>
           </div>
@@ -166,9 +167,7 @@ const AlertLogs = ({ refreshTrigger = 0, maxHeight = '24rem' }) => {
                   <th className="table-header source-col">_source</th>
                 </tr>
               </thead>
-              <tbody>
-                {tableRows}
-              </tbody>
+              <tbody>{tableRows}</tbody>
             </table>
             {loading && (
               <div className="loading-overlay">
@@ -182,4 +181,4 @@ const AlertLogs = ({ refreshTrigger = 0, maxHeight = '24rem' }) => {
   );
 };
 
-export default AlertLogs; 
+export default AlertLogs;
