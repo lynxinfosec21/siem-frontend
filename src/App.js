@@ -6,56 +6,6 @@ import axios from 'axios';
 
 function App() {
 
-async function getOpenSearchInfo() {
-  try {
-    const response = await axios.get('http://localhost:4000/api/opensearch', {
-      auth: {
-        username: 'admin',
-        password: 'Orthorhombic777!',
-      },
-    });
-
-    console.log('OpenSearch Info:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error calling OpenSearch:', error.response?.data || error.message);
-  }
-}
-
-
-const fetchLogs = async () => {
-  try {
-    const response = await axios.post('http://localhost:4000/api/search', {
-      index: 'top_queries-*',
-      query: {
-        size: 100,
-        query: {
-          match_all: {}
-        }
-      }
-    });
-
-    console.log('Logs:', response.data.hits.hits);
-  } catch (error) {
-    console.error('Error fetching logs:', error);
-  }
-};
-
-
-const fetchIndices = async () => {
-  try {
-    const response = await axios.get('http://localhost:4000/api/indices');
-    console.log("Indices:\n", response.data);
-  } catch (error) {
-    console.error("Error fetching indices:", error);
-  }
-};
-
-useEffect(() => {
-  getOpenSearchInfo();
-  fetchLogs();
-  fetchIndices();
-}, []);
   return (
     <div>
       <Navbar />

@@ -11,16 +11,6 @@ const AUTH = {
   password: 'Orthorhombic777!',
 };
 
-app.get('/api/opensearch', async (req, res) => {
-  try {
-    const response = await axios.get(OPENSEARCH_URL, {
-      auth: AUTH,
-    });
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 app.post('/api/search', async (req, res) => {
   const { index, query } = req.body;
@@ -47,31 +37,6 @@ app.post('/api/search', async (req, res) => {
     if (err.response) {
       console.error('🔴 Response Data:', err.response.data);
     }
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-
-app.get('/api/indices', async (req, res) => {
-  try {
-    const { data } = await axios.get(
-      `${OPENSEARCH_URL}/_cat/indices?v&expand_wildcards=all`,
-      {
-        auth: AUTH,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        httpsAgent: new (require('https').Agent)({
-          rejectUnauthorized: false // For self-signed certs
-        })
-      }
-    );
-
-    res.type('text/plain'); // Because _cat APIs return plain text
-    res.send(data);
-  } catch (err) {
-    console.error('Error fetching indices:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
