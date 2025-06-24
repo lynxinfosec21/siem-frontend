@@ -4,7 +4,7 @@ import { FaSearch, FaCalendarAlt, FaSyncAlt, FaFilter, FaPlusCircle } from 'reac
 import MyBarChart from '../BarChart/BarChart';
 import AlertLogs from '../AlertLogs/AlertLogs';
 
-const MainSection = () => {
+const MainSection = ({ logs = [] }) => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [timeDirection, setTimeDirection] = useState('Last');
   const [timeValue, setTimeValue] = useState(24);
@@ -33,6 +33,38 @@ const MainSection = () => {
   const handleRefresh = () => {
     setRefreshTrigger(prev => prev + 1);
   };
+
+  // Map logs to bar chart data (group by hour for example)
+  const barChartData = (() => {
+    if (!logs.length) return [];
+    // Group logs by hour (or other time unit)
+    const buckets = {};
+    logs.forEach(log => {
+      if (log._source && log._source.timestamp) {
+        const date = new Date(log._source.timestamp);
+        // Format as 'HH:00' for hour buckets
+        const hour = date.getHours().toString().padStart(2, '0') + ':00';
+        buckets[hour] = (buckets[hour] || 0) + 1;
+      }
+    });
+    return Object.entries(buckets).map(([timestamp, count]) => ({ timestamp, count }));
+  })();
+
+  // Hits count
+  const hitsCount = logs.length;
+
+  // Date range
+  let minDate = null, maxDate = null;
+  logs.forEach(log => {
+    if (log._source && log._source.timestamp) {
+      const date = new Date(log._source.timestamp);
+      if (!minDate || date < minDate) minDate = date;
+      if (!maxDate || date > maxDate) maxDate = date;
+    }
+  });
+  const dateRange = minDate && maxDate
+    ? `${minDate.toLocaleString()} - ${maxDate.toLocaleString()}`
+    : 'No data';
 
   return (
     <div className="main-section">
@@ -141,18 +173,18 @@ const MainSection = () => {
 
         <div className="Main-section">
           <div className="hits-container">
-            <span className="hits-number">17,642 </span>
+            <span className="hits-number">{hitsCount} </span>
             <span className="hits-label"> hits</span>
           </div>
 
           <div className="date-row">
-            <h5 className="date-range">Jun 1, 2025 @ 00:58:23.123 - Jun 2, 2025 @ 00:58:23.125</h5>
+            <h5 className="date-range">{dateRange}</h5>
             <select className="auto-dropdown">
               <option value="auto">auto</option>
             </select>
           </div>
 
-          <MyBarChart />
+          <MyBarChart data={barChartData} />
 
           {/* AlertLogs Component */}
           <div className="mt-6">
