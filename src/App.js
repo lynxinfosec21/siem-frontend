@@ -28,7 +28,7 @@ function App() {
       const response = await axios.post('http://localhost:4000/api/search', {
         index: 'top_queries-*',
         query: {
-          size: 100,
+          size: 2000,
           query: {
             match_all: {}
           }
