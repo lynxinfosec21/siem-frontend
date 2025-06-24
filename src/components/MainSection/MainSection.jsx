@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import './MainSection.css';
 import { FaSearch, FaCalendarAlt, FaSyncAlt, FaFilter, FaPlusCircle } from 'react-icons/fa';
 import MyBarChart from '../BarChart/BarChart';
+import AlertLogs from '../AlertLogs/AlertLogs';
 
 const MainSection = () => {
   const [showCalendar, setShowCalendar] = useState(false);
@@ -9,6 +10,7 @@ const MainSection = () => {
   const [timeValue, setTimeValue] = useState(24);
   const [timeUnit, setTimeUnit] = useState('Hours');
   const [selectedLabel, setSelectedLabel] = useState('Last 24 Hours');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const calendarRef = useRef(null);
 
@@ -26,6 +28,10 @@ const MainSection = () => {
     const label = `${timeDirection} ${timeValue} ${timeUnit}`;
     setSelectedLabel(label);
     setShowCalendar(false);
+  };
+
+  const handleRefresh = () => {
+    setRefreshTrigger(prev => prev + 1);
   };
 
   return (
@@ -119,7 +125,7 @@ const MainSection = () => {
         </div>
 
         {/* Refresh Box */}
-        <div className="box small-box blue-box">
+        <div className="box small-box blue-box" onClick={handleRefresh}>
           <FaSyncAlt className="icon blue" />
           <span className="refresh-text">Refresh</span>
         </div>
@@ -148,35 +154,9 @@ const MainSection = () => {
 
           <MyBarChart />
 
-          {/* Table of Logs */}
-          <div className="bg-white p-4 rounded-md shadow mt-6">
-            <h3 className="text-lg font-semibold mb-4">Recent Alerts</h3>
-            <div className="overflow-auto max-h-96">
-              <table className="custom-table">
-                <thead>
-                  <tr>
-                    <th className="table-header time-col">Time</th>
-                    <th className="table-header source-col">_source</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...Array(3)].map((_, i) => (
-                    <tr key={i} className="table-row">
-                      <td className="table-cell time-cell">
-                        Jun 2, 2025 @ 00:58:18.500
-                      </td>
-                      <td className="table-cell source-cell">
-                        <code>
-                          predecoder.hostname: wazuh | predecoder.program_name: sshd | agent.id: 000 |
-                          data.srcuser: admin | data.srcip: 80.94.95.112 | rule.level: 5 |
-                          rule.description: sshd: Attempt to login using a non-existent user
-                        </code>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          {/* AlertLogs Component */}
+          <div className="mt-6">
+            <AlertLogs refreshTrigger={refreshTrigger} maxHeight="24rem" />
           </div>
 
         </div>
