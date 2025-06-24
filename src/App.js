@@ -36,17 +36,19 @@ function App() {
       });
       const hits = response.data.hits.hits || [];
       setLogs(hits);
-      // Extract available fields from logs
-      const allFields = new Set();
-      hits.forEach(log => {
-        if (log._source) {
-          Object.keys(log._source).forEach(field => allFields.add(field));
-        }
-      });
-      setFields(Array.from(allFields));
       console.log('Logs:', hits);
     } catch (error) {
       console.error('Error fetching logs:', error);
+    }
+  };
+
+  const fetchFields = async () => {
+    try {
+      const response = await axios.get('http://localhost:4000/api/fields');
+      setFields(response.data);
+      console.log('Fields:', response.data);
+    } catch (error) {
+      console.error('Error fetching fields:', error);
     }
   };
 
@@ -62,6 +64,7 @@ function App() {
   useEffect(() => {
     getOpenSearchInfo();
     fetchLogs();
+    fetchFields();
     fetchIndices();
   }, []);
 

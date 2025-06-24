@@ -51,8 +51,6 @@ app.post('/api/search', async (req, res) => {
   }
 });
 
-
-
 app.get('/api/indices', async (req, res) => {
   try {
     const { data } = await axios.get(
@@ -72,6 +70,44 @@ app.get('/api/indices', async (req, res) => {
     res.send(data);
   } catch (err) {
     console.error('Error fetching indices:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Helper to recursively flatten mapping properties
+function extractFields(properties, prefix = '') {
+  let fields = [];
+  for (const key in properties) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (properties[key].properties) {
+      fields = fields.concat(extractFields(properties[key].properties, path));
+    } else {
+      fields.push(path);
+    }
+  }
+  return fields;
+}
+
+// Endpoint to get all available fields for top* indices
+app.get('/api/fields', async (req, res) => {
+  try {
+    const { data } = await axios.get(
+      `${OPENSEARCH_URL}/top*/_mapping`,
+      {
+        auth: AUTH,
+        headers: { 'Content-Type': 'application/json' },
+        httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false })
+      }
+    );
+    let allFields = new Set();
+    for (const index of Object.values(data)) {
+      if (index.mappings && index.mappings.properties) {
+        extractFields(index.mappings.properties).forEach(f => allFields.add(f));
+      }
+    }
+    res.json(Array.from(allFields));
+  } catch (err) {
+    console.error('Error fetching fields:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
