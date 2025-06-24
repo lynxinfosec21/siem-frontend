@@ -4,15 +4,7 @@ import { ChevronDown, RotateCcw, Search, Plus } from "lucide-react";
 import { BsGrid3X3GapFill } from "react-icons/bs";
 import FieldInfoCard from "../InfoCard/FieldInfoCard"; 
 
-const fields = [
-  "_index", "agent.id", "agent.ip", "agent.name", "data.action", "data.alert.action",
-  "data.alert.category", "data.alert.gid", "data.alert.metadata.affected_product",
-  "data.alert.metadata.attack_target", "data.alert.metadata.confidence",
-  "data.alert.metadata.created_at", "data.alert.metadata.deployment",
-  "data.alert.metadata.signature_severity",
-];
-
-const Sidebar = () => {
+const Sidebar = ({ fields = [] }) => {
   const [selectedField, setSelectedField] = useState(null);
   const [cardPosition, setCardPosition] = useState({ top: 0, left: 0 });
 

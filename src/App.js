@@ -44,6 +44,7 @@ function App() {
         }
       });
       setFields(Array.from(allFields));
+      console.log('Logs:', hits);
     } catch (error) {
       console.error('Error fetching logs:', error);
     }

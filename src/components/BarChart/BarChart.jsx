@@ -10,33 +10,8 @@ import {
   Label,
 } from 'recharts';
 
-// Corrected data array with timestamp
-const data = [
-  { timestamp: '00:00', count: 300 },
-  { timestamp: '01:00', count: 500 },
-  { timestamp: '02:00', count: 450 },
-  { timestamp: '03:00', count: 600 },
-  { timestamp: '04:00', count: 400 },
-  { timestamp: '05:00', count: 550 },
-  { timestamp: '06:00', count: 700 },
-  { timestamp: '07:00', count: 350 },
-  { timestamp: '08:00', count: 800 },
-  { timestamp: '09:00', count: 650 },
-  { timestamp: '10:00', count: 300 },
-  { timestamp: '11:00', count: 450 },
-  { timestamp: '12:00', count: 500 },
-  { timestamp: '13:00', count: 600 },
-  { timestamp: '14:00', count: 350 },
-  { timestamp: '15:00', count: 550 },
-  { timestamp: '16:00', count: 750 },
-  { timestamp: '17:00', count: 400 },
-  { timestamp: '18:00', count: 800 },
-  { timestamp: '19:00', count: 650 },
-  { timestamp: '20:00', count: 500 },
-  { timestamp: '21:00', count: 600 },
-  { timestamp: '22:00', count: 350 },
-  { timestamp: '23:00', count: 550 },
-];
+// Remove hardcoded data array
+// const data = [...];
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -56,7 +31,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const MyBarChart = () => {
+const MyBarChart = ({ data = [] }) => {
   const barColor = ' #20B2AA'; 
   const backgroundColor = '#F4F4F4';
   const gridColor = '#CCCCCC';
